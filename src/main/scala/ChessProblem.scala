@@ -16,8 +16,8 @@ object ChessProblem {
   def main(args: Array[String]): Unit = {
     println("Input: 3×3 board containing 2 Kings and 1 Rook")
     val solution = solve(Chess.Board(2, 2), List(Chess.King, Chess.King, Chess.Rock))
-    println(f"I have ${solution.size} solutions: ")
-    solution.map(println)
+    println(f"I have ${solution.size} solutions. No more of 3 of them follow: ")
+    solution.take(3).map(println)
   }
 
 }
