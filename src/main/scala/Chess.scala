@@ -107,4 +107,20 @@ object Chess {
         .filter(pos => pos.x <= board.x && pos.y <= board.y)
         .toSet
   }
+
+  case object Knight extends Piece {
+    override def toString: String = "♘"
+
+    override def possibleSquares(current: Square, board: Board): Set[Square] =
+      (-1 * board.x to 1 * board.x).map(x =>
+        (-1 * board.x to 1 * board.x).map(y =>
+          Square(current.x + x, current.y + y)
+        ))
+        .flatten
+        .filter(pos => (Math.abs(pos.x - current.x) == 1 && Math.abs(pos.y - current.y) == 2) || (Math.abs(pos.x - current.x) == 2 && Math.abs(pos.y - current.y) == 1))
+        .filter(pos => pos != current)
+        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x <= board.x && pos.y <= board.y)
+        .toSet
+  }
 }

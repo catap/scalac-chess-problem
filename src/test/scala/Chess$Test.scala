@@ -22,6 +22,10 @@ class Chess$Test extends FreeSpec {
       "Bishop shouldn't have any possible position" - {
         assert(Bishop.possibleSquares(square, board).size == 0)
       }
+
+      "Knight shouldn't have any possible position" - {
+        assert(Knight.possibleSquares(square, board).size == 0)
+      }
     }
 
     "Board 2x2" - {
@@ -42,6 +46,10 @@ class Chess$Test extends FreeSpec {
 
       "Bishop should have 1 possible position" - {
         assert(Bishop.possibleSquares(square, board).size == 1)
+      }
+
+      "Knight shouldn't have any possible position" - {
+        assert(Knight.possibleSquares(square, board).size == 0)
       }
     }
 
@@ -88,7 +96,7 @@ class Chess$Test extends FreeSpec {
       }
 
       "Bishop should have " - {
-        "13 possible position at center  (4,3)" - {
+        "13 possible position at center (4,3)" - {
           assert(Bishop.possibleSquares(center, board).size == 13)
         }
         "7 possible position at corner" - {
@@ -96,6 +104,18 @@ class Chess$Test extends FreeSpec {
         }
         "7 possible position at wall" - {
           assert(Bishop.possibleSquares(wall, board).size == 7)
+        }
+      }
+
+      "Knight should have " - {
+        "8 possible position at center" - {
+          assert(Knight.possibleSquares(center, board).size == 8)
+        }
+        "2 possible position at corner" - {
+          assert(Knight.possibleSquares(corner, board).size == 2)
+        }
+        "4 possible position at wall" - {
+          assert(Knight.possibleSquares(wall, board).size == 4)
         }
       }
     }
