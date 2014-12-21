@@ -38,38 +38,54 @@ object Chess {
   sealed trait Piece {
     def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean
 
-    def possibleSquares(current: Square, board: Board): Set[Square] = {
-      def testSquare(current: Square, x: Int, y: Int) =
-        if (x == current.x && y == current.y)
-          false
-        else {
-          if (possibleSquaresFilter(current, x, y)) true
-          else false
-        }
-
-      @tailrec
-      def loopTestSquare(current: Square, board: Board, x: Int, y: Int, acc: Set[Square]): Set[Square] = {
-        val acc_new =
-          if (testSquare(current, x, y)) acc ++ Set(Square(x, y))
-          else acc
-        (x, y) match {
-          case (board.x, board.y) =>
-            acc_new
-          case (_, board.y) =>
-            loopTestSquare(current, board, x + 1, 1, acc_new)
-          case (_, _) =>
-            loopTestSquare(current, board, x, y + 1, acc_new)
-        }
+    private def testSquare(current: Square, x: Int, y: Int) =
+      if (x == current.x && y == current.y)
+        false
+      else {
+        if (possibleSquaresFilter(current, x, y)) true
+        else false
       }
 
+    @tailrec
+    private final def loopTestSquare(current: Square, board: Board, x: Int, y: Int, acc: Set[Square]): Set[Square] = {
+      val acc_new =
+        if (testSquare(current, x, y)) acc ++ Set(Square(x, y))
+        else acc
+      (x, y) match {
+        case (board.x, board.y) =>
+          acc_new
+        case (_, board.y) =>
+          loopTestSquare(current, board, x + 1, 1, acc_new)
+        case (_, _) =>
+          loopTestSquare(current, board, x, y + 1, acc_new)
+      }
+    }
+
+    def possibleSquares(current: Square, board: Board): Set[Square] = {
       loopTestSquare(current, board, 1, 1, Set())
     }
 
-    def isThreatens(current: Square, board: Board, targets: Set[Square]): Boolean = {
-      possibleSquares(current, board)
-        .filter(targets.contains)
-        .nonEmpty
+    @tailrec
+    private final def loopTestThreatens(current: Square, board: Board, targets: Set[Square], x: Int, y: Int, threaten: Boolean): Boolean = {
+      val acc_new =
+        if (testSquare(current, x, y))
+          if (targets.contains(Square(x, y)))
+            true
+          else false
+        else false
+      (acc_new, x, y) match {
+        case (true, _, _) => true
+        case (false, board.x, board.y) =>
+          acc_new
+        case (false, _, board.y) =>
+          loopTestThreatens(current, board, targets, x + 1, 1, acc_new)
+        case (false, _, _) =>
+          loopTestThreatens(current, board, targets, x, y + 1, acc_new)
+      }
     }
+
+    def isThreatens(current: Square, board: Board, targets: Set[Square]): Boolean =
+      loopTestThreatens(current, board, targets, 1, 1, false)
   }
 
   case object King extends Piece {
