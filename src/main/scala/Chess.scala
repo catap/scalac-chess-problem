@@ -1,4 +1,4 @@
-
+import scala.annotation.tailrec
 
 case class Chess(board: Chess.Board, occupied: Set[Chess.Position]) {
   lazy val occupiedSquare = occupied.map(_.square)
@@ -36,15 +36,34 @@ object Chess {
   case class Board(x: Int, y: Int)
 
   sealed trait Piece {
-    def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean
+    def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean
 
-    def possibleSquares(current: Square, board: Board): Set[Square] =
-      (for (x <- 1 to board.x; y <- 1 to board.y)
-      yield (x, y))
-        .filter(xy => xy._1 != current.x || xy._2 != current.y)
-        .filter(possibleSquaresFilter(current))
-        .map(xy => Square(xy._1, xy._2))
-        .toSet
+    def possibleSquares(current: Square, board: Board): Set[Square] = {
+      def testSquare(current: Square, x: Int, y: Int) =
+        if (x == current.x && y == current.y)
+          false
+        else {
+          if (possibleSquaresFilter(current, x, y)) true
+          else false
+        }
+
+      @tailrec
+      def loopTestSquare(current: Square, board: Board, x: Int, y: Int, acc: Set[Square]): Set[Square] = {
+        val acc_new =
+          if (testSquare(current, x, y)) acc ++ Set(Square(x, y))
+          else acc
+        (x, y) match {
+          case (board.x, board.y) =>
+            acc_new
+          case (_, board.y) =>
+            loopTestSquare(current, board, x + 1, 1, acc_new)
+          case (_, _) =>
+            loopTestSquare(current, board, x, y + 1, acc_new)
+        }
+      }
+
+      loopTestSquare(current, board, 1, 1, Set())
+    }
 
     def isThreatens(current: Square, board: Board, targets: Set[Square]): Boolean = {
       possibleSquares(current, board)
@@ -56,37 +75,38 @@ object Chess {
   case object King extends Piece {
     override def toString: String = "♔"
 
-    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
-      Math.abs(current.x - xy._1) <= 1 && Math.abs(current.y - xy._2) <= 1
+    override def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean =
+      Math.abs(current.x - x) <= 1 && Math.abs(current.y - y) <= 1
   }
 
   case object Queen extends Piece {
     override def toString: String = "♕"
 
-    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
-      current.x == xy._1 || current.y == xy._2 ||
-        Math.abs(current.x - xy._1) == Math.abs(current.y - xy._2)
+    override def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean =
+      current.x == x || current.y == y ||
+        Math.abs(current.x - x) == Math.abs(current.y - y)
   }
 
   case object Rock extends Piece {
     override def toString: String = "♖"
 
-    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
-      current.x == xy._1 || current.y == xy._2
+    override def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean =
+      current.x == x || current.y == y
   }
 
   case object Bishop extends Piece {
     override def toString: String = "♗"
 
-    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
-      Math.abs(current.x - xy._1) == Math.abs(current.y - xy._2)
+    override def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean =
+      Math.abs(current.x - x) == Math.abs(current.y - y)
   }
 
   case object Knight extends Piece {
     override def toString: String = "♘"
 
-    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
-      (Math.abs(current.x - xy._1) == 1 && Math.abs(current.y - xy._2) == 2) ||
-        (Math.abs(current.x - xy._1) == 2 && Math.abs(current.y - xy._2) == 1)
+    override def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean =
+      (Math.abs(current.x - x) == 1 && Math.abs(current.y - y) == 2) ||
+        (Math.abs(current.x - x) == 2 && Math.abs(current.y - y) == 1)
   }
+
 }
