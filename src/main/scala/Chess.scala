@@ -7,6 +7,11 @@ object Chess {
   sealed trait Piece {
     def possiblePositions(current: Position, board: Board): Set[Position]
 
+    def isThreatens(current: Position, board: Board, targets: Set[Position]): Boolean = {
+      possiblePositions(current, board)
+        .filter(targets.contains)
+        .nonEmpty
+    }
   }
 
   case object King extends Piece {

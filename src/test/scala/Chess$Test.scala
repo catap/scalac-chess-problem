@@ -37,6 +37,48 @@ class Chess$Test extends org.scalatest.FreeSpec {
           assert(King.possiblePositions(wall, board).size == 5)
         }
       }
+    }
+  }
+
+  "Threaten on" - {
+    "board 1x1" - {
+      val board = Board(0, 0)
+      val position = Position(0, 0)
+      "Nobody shouldn't threaten to him-self" - {
+        assert(!King.isThreatens(position, board, Set(position)))
+      }
+    }
+
+    "board 2x2" - {
+      val board = Board(1, 1)
+      val position1 = Position(0, 0)
+      val position2 = Position(1, 1)
+
+      "King should threaten to another piece" - {
+        assert(King.isThreatens(position1, board, Set(position2)))
+      }
+    }
+
+    "board 8x8" - {
+      val board = Board(7, 7)
+      val center1 = Position(4, 3)
+      val center2 = Position(3, 4)
+      val corner1 = Position(0, 0)
+      val corner2 = Position(7, 7)
+
+      "King at center should threaten to another King at center" - {
+        assert(King.isThreatens(center1, board, Set(center2)))
+      }
+
+      "King at center shouldn't threaten to another King at corner" - {
+        assert(!King.isThreatens(center1, board, Set(corner1)))
+        assert(!King.isThreatens(center1, board, Set(corner2)))
+        assert(!King.isThreatens(center1, board, Set(corner1, corner2)))
+      }
+
+      "King at center should threaten to someone on this board" - {
+        assert(King.isThreatens(center1, board, Set(center1, center2, corner1, corner2)))
       }
     }
   }
+}
