@@ -36,7 +36,15 @@ object Chess {
   case class Board(x: Int, y: Int)
 
   sealed trait Piece {
-    def possibleSquares(current: Square, board: Board): Set[Square]
+    def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean
+
+    def possibleSquares(current: Square, board: Board): Set[Square] =
+      (for (x <- 1 to board.x; y <- 1 to board.y)
+      yield (x, y))
+        .filter(xy => xy._1 != current.x || xy._2 != current.y)
+        .filter(possibleSquaresFilter(current))
+        .map(xy => Square(xy._1, xy._2))
+        .toSet
 
     def isThreatens(current: Square, board: Board, targets: Set[Square]): Boolean = {
       possibleSquares(current, board)
@@ -48,79 +56,37 @@ object Chess {
   case object King extends Piece {
     override def toString: String = "♔"
 
-    def possibleSquares(current: Square, board: Board): Set[Square] =
-      (-1 to 1).map(x =>
-        (-1 to 1).map(y =>
-          Square(current.x + x, current.y + y)
-        ))
-        .flatten
-        .filter(pos => pos != current)
-        .filter(pos => pos.x > 0 && pos.y > 0)
-        .filter(pos => pos.x <= board.x && pos.y <= board.y)
-        .toSet
+    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
+      Math.abs(current.x - xy._1) <= 1 && Math.abs(current.y - xy._2) <= 1
   }
 
   case object Queen extends Piece {
     override def toString: String = "♕"
 
-    override def possibleSquares(current: Square, board: Board): Set[Square] =
-      (-1 * board.x to 1 * board.x).map(x =>
-        (-1 * board.x to 1 * board.x).map(y =>
-          Square(current.x + x, current.y + y)
-        ))
-        .flatten
-        .filter(pos => pos.x == current.x || pos.y == current.y || Math.abs(pos.x - current.x) == Math.abs(pos.y - current.y))
-        .filter(pos => pos != current)
-        .filter(pos => pos.x > 0 && pos.y > 0)
-        .filter(pos => pos.x <= board.x && pos.y <= board.y)
-        .toSet
+    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
+      current.x == xy._1 || current.y == xy._2 ||
+        Math.abs(current.x - xy._1) == Math.abs(current.y - xy._2)
   }
 
   case object Rock extends Piece {
     override def toString: String = "♖"
 
-    override def possibleSquares(current: Square, board: Board): Set[Square] =
-      (-1 * board.x to 1 * board.x).map(x =>
-        (-1 * board.x to 1 * board.x).map(y =>
-          Square(current.x + x, current.y + y)
-        ))
-        .flatten
-        .filter(pos => pos.x == current.x || pos.y == current.y)
-        .filter(pos => pos != current)
-        .filter(pos => pos.x > 0 && pos.y > 0)
-        .filter(pos => pos.x <= board.x && pos.y <= board.y)
-        .toSet
+    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
+      current.x == xy._1 || current.y == xy._2
   }
 
   case object Bishop extends Piece {
     override def toString: String = "♗"
 
-    override def possibleSquares(current: Square, board: Board): Set[Square] =
-      (-1 * board.x to 1 * board.x).map(x =>
-        (-1 * board.x to 1 * board.x).map(y =>
-          Square(current.x + x, current.y + y)
-        ))
-        .flatten
-        .filter(pos => Math.abs(pos.x - current.x) == Math.abs(pos.y - current.y))
-        .filter(pos => pos != current)
-        .filter(pos => pos.x > 0 && pos.y > 0)
-        .filter(pos => pos.x <= board.x && pos.y <= board.y)
-        .toSet
+    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
+      Math.abs(current.x - xy._1) == Math.abs(current.y - xy._2)
   }
 
   case object Knight extends Piece {
     override def toString: String = "♘"
 
-    override def possibleSquares(current: Square, board: Board): Set[Square] =
-      (-1 * board.x to 1 * board.x).map(x =>
-        (-1 * board.x to 1 * board.x).map(y =>
-          Square(current.x + x, current.y + y)
-        ))
-        .flatten
-        .filter(pos => (Math.abs(pos.x - current.x) == 1 && Math.abs(pos.y - current.y) == 2) || (Math.abs(pos.x - current.x) == 2 && Math.abs(pos.y - current.y) == 1))
-        .filter(pos => pos != current)
-        .filter(pos => pos.x > 0 && pos.y > 0)
-        .filter(pos => pos.x <= board.x && pos.y <= board.y)
-        .toSet
+    override def possibleSquaresFilter(current: Square)(xy: (Int, Int)): Boolean =
+      (Math.abs(current.x - xy._1) == 1 && Math.abs(current.y - xy._2) == 2) ||
+        (Math.abs(current.x - xy._1) == 2 && Math.abs(current.y - xy._2) == 1)
   }
 }
