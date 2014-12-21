@@ -4,8 +4,8 @@ import org.scalatest.FreeSpec
 class Chess$Test extends FreeSpec {
   "Move pieces on board" - {
     "Board 1x1" - {
-      val board = Board(0, 0)
-      val square = Square(0, 0)
+      val board = Board(1, 1)
+      val square = Square(1, 1)
 
       "King shouldn't have any possible position" - {
         assert(King.possibleSquares(square, board).size == 0)
@@ -29,8 +29,8 @@ class Chess$Test extends FreeSpec {
     }
 
     "Board 2x2" - {
-      val board = Board(1, 1)
-      val square = Square(0, 0)
+      val board = Board(2, 2)
+      val square = Square(1, 1)
 
       "King should have 3 possible position" - {
         assert(King.possibleSquares(square, board).size == 3)
@@ -54,10 +54,10 @@ class Chess$Test extends FreeSpec {
     }
 
     "Board 8x8" - {
-      val board = Board(7, 7)
-      val center = Square(4, 3)
-      val corner = Square(0, 0)
-      val wall = Square(4, 7)
+      val board = Board(8, 8)
+      val center = Square(5, 4)
+      val corner = Square(1, 1)
+      val wall = Square(5, 8)
 
       "King should have " - {
         "8 possible position at center" - {
@@ -72,7 +72,7 @@ class Chess$Test extends FreeSpec {
       }
 
       "Queen should have " - {
-        "27 possible position at center (4,3)" - {
+        "27 possible position at center (5, 4)" - {
           assert(Queen.possibleSquares(center, board).size == 27)
         }
         "21 possible position at corner" - {
@@ -96,7 +96,7 @@ class Chess$Test extends FreeSpec {
       }
 
       "Bishop should have " - {
-        "13 possible position at center (4,3)" - {
+        "13 possible position at center (5, 4)" - {
           assert(Bishop.possibleSquares(center, board).size == 13)
         }
         "7 possible position at corner" - {
@@ -123,8 +123,8 @@ class Chess$Test extends FreeSpec {
 
   "Threaten on" - {
     "board 1x1" - {
-      val board = Board(0, 0)
-      val square = Square(0, 0)
+      val board = Board(1, 1)
+      val square = Square(1, 1)
       "Nobody shouldn't threaten to him-self" - {
         assert(!King.isThreatens(square, board, Set(square)))
         assert(!Chess(board, Set(Position(King, square))).isThreaten)
@@ -132,9 +132,9 @@ class Chess$Test extends FreeSpec {
     }
 
     "board 2x2" - {
-      val board = Board(1, 1)
-      val square1 = Square(0, 0)
-      val square2 = Square(1, 1)
+      val board = Board(2, 2)
+      val square1 = Square(1, 1)
+      val square2 = Square(2, 2)
 
       "King should threaten to another piece" - {
         assert(King.isThreatens(square1, board, Set(square2)))
@@ -145,11 +145,11 @@ class Chess$Test extends FreeSpec {
     }
 
     "board 8x8" - {
-      val board = Board(7, 7)
-      val center1 = Square(4, 3)
-      val center2 = Square(3, 4)
-      val corner1 = Square(0, 0)
-      val corner2 = Square(7, 7)
+      val board = Board(8, 8)
+      val center1 = Square(5, 4)
+      val center2 = Square(4, 5)
+      val corner1 = Square(1, 1)
+      val corner2 = Square(8, 8)
 
       "King at center should threaten to another King at center" - {
         assert(King.isThreatens(center1, board, Set(center2)))
@@ -178,10 +178,10 @@ class Chess$Test extends FreeSpec {
   }
 
   "Dump to string chess" - {
-    val board = Board(7, 7)
-    val center = Square(4, 3)
-    val corner = Square(0, 0)
-    val wall = Square(4, 7)
+    val board = Board(8, 8)
+    val center = Square(5, 4)
+    val corner = Square(1, 1)
+    val wall = Square(5, 8)
 
     assert(Chess(board, Set(Position(King, center), Position(King, corner), Position(King, wall))).toString ==
       "♔*------\n" +

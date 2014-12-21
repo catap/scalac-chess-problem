@@ -12,8 +12,8 @@ case class Chess(board: Chess.Board, occupied: Set[Chess.Position]) {
       .flatten
 
   override def toString: String =
-    (0 to board.y).map(y =>
-      (0 to board.x).map(x =>
+    (1 to board.y).map(y =>
+      (1 to board.x).map(x =>
         occupied.find {
           case Chess.Position(_, Chess.Square(_x, _y)) if _x == x && _y == y => true
           case _ => false
@@ -55,7 +55,7 @@ object Chess {
         ))
         .flatten
         .filter(pos => pos != current)
-        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x > 0 && pos.y > 0)
         .filter(pos => pos.x <= board.x && pos.y <= board.y)
         .toSet
   }
@@ -71,7 +71,7 @@ object Chess {
         .flatten
         .filter(pos => pos.x == current.x || pos.y == current.y || Math.abs(pos.x - current.x) == Math.abs(pos.y - current.y))
         .filter(pos => pos != current)
-        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x > 0 && pos.y > 0)
         .filter(pos => pos.x <= board.x && pos.y <= board.y)
         .toSet
   }
@@ -87,7 +87,7 @@ object Chess {
         .flatten
         .filter(pos => pos.x == current.x || pos.y == current.y)
         .filter(pos => pos != current)
-        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x > 0 && pos.y > 0)
         .filter(pos => pos.x <= board.x && pos.y <= board.y)
         .toSet
   }
@@ -103,7 +103,7 @@ object Chess {
         .flatten
         .filter(pos => Math.abs(pos.x - current.x) == Math.abs(pos.y - current.y))
         .filter(pos => pos != current)
-        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x > 0 && pos.y > 0)
         .filter(pos => pos.x <= board.x && pos.y <= board.y)
         .toSet
   }
@@ -119,7 +119,7 @@ object Chess {
         .flatten
         .filter(pos => (Math.abs(pos.x - current.x) == 1 && Math.abs(pos.y - current.y) == 2) || (Math.abs(pos.x - current.x) == 2 && Math.abs(pos.y - current.y) == 1))
         .filter(pos => pos != current)
-        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x > 0 && pos.y > 0)
         .filter(pos => pos.x <= board.x && pos.y <= board.y)
         .toSet
   }
