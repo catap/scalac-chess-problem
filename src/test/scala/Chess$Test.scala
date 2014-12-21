@@ -4,7 +4,7 @@ class Chess$Test extends org.scalatest.FreeSpec {
   "Move pieces on board" - {
     "Board 1x1" - {
       val board = Board(0, 0)
-      val position = Position(0, 0)
+      val position = Square(0, 0)
 
       "Pieces should don't have any possible position" - {
         assert(King.possiblePositions(position, board).size == 0)
@@ -13,7 +13,7 @@ class Chess$Test extends org.scalatest.FreeSpec {
 
     "Board 2x2" - {
       val board = Board(1, 1)
-      val position = Position(0, 0)
+      val position = Square(0, 0)
 
       "King should have 3 possible position" - {
         assert(King.possiblePositions(position, board).size == 3)
@@ -22,9 +22,9 @@ class Chess$Test extends org.scalatest.FreeSpec {
 
     "Board 8x8" - {
       val board = Board(7, 7)
-      val center = Position(4, 3)
-      val corner = Position(0, 0)
-      val wall = Position(4, 7)
+      val center = Square(4, 3)
+      val corner = Square(0, 0)
+      val wall = Square(4, 7)
 
       "King should have " - {
         "8 possible position at center" - {
@@ -43,7 +43,7 @@ class Chess$Test extends org.scalatest.FreeSpec {
   "Threaten on" - {
     "board 1x1" - {
       val board = Board(0, 0)
-      val position = Position(0, 0)
+      val position = Square(0, 0)
       "Nobody shouldn't threaten to him-self" - {
         assert(!King.isThreatens(position, board, Set(position)))
       }
@@ -51,8 +51,8 @@ class Chess$Test extends org.scalatest.FreeSpec {
 
     "board 2x2" - {
       val board = Board(1, 1)
-      val position1 = Position(0, 0)
-      val position2 = Position(1, 1)
+      val position1 = Square(0, 0)
+      val position2 = Square(1, 1)
 
       "King should threaten to another piece" - {
         assert(King.isThreatens(position1, board, Set(position2)))
@@ -61,10 +61,10 @@ class Chess$Test extends org.scalatest.FreeSpec {
 
     "board 8x8" - {
       val board = Board(7, 7)
-      val center1 = Position(4, 3)
-      val center2 = Position(3, 4)
-      val corner1 = Position(0, 0)
-      val corner2 = Position(7, 7)
+      val center1 = Square(4, 3)
+      val center2 = Square(3, 4)
+      val corner1 = Square(0, 0)
+      val corner2 = Square(7, 7)
 
       "King at center should threaten to another King at center" - {
         assert(King.isThreatens(center1, board, Set(center2)))

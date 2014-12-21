@@ -1,13 +1,13 @@
 object Chess {
 
-  case class Position(x: Int, y: Int)
+  case class Square(x: Int, y: Int)
 
   case class Board(x: Int, y: Int)
 
   sealed trait Piece {
-    def possiblePositions(current: Position, board: Board): Set[Position]
+    def possiblePositions(current: Square, board: Board): Set[Square]
 
-    def isThreatens(current: Position, board: Board, targets: Set[Position]): Boolean = {
+    def isThreatens(current: Square, board: Board, targets: Set[Square]): Boolean = {
       possiblePositions(current, board)
         .filter(targets.contains)
         .nonEmpty
@@ -15,10 +15,10 @@ object Chess {
   }
 
   case object King extends Piece {
-    def possiblePositions(current: Position, board: Board): Set[Position] =
+    def possiblePositions(current: Square, board: Board): Set[Square] =
       (-1 to 1).map(x =>
         (-1 to 1).map(y =>
-          Position(current.x + x, current.y + y)
+          Square(current.x + x, current.y + y)
         ))
         .flatten
         .filter(pos => pos != current)
