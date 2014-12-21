@@ -65,27 +65,8 @@ object Chess {
       loopTestSquare(current, board, 1, 1, Set())
     }
 
-    @tailrec
-    private final def loopTestThreatens(current: Square, board: Board, targets: Set[Square], x: Int, y: Int, threaten: Boolean): Boolean = {
-      val acc_new =
-        if (testSquare(current, x, y))
-          if (targets.contains(Square(x, y)))
-            true
-          else false
-        else false
-      (acc_new, x, y) match {
-        case (true, _, _) => true
-        case (false, board.x, board.y) =>
-          acc_new
-        case (false, _, board.y) =>
-          loopTestThreatens(current, board, targets, x + 1, 1, acc_new)
-        case (false, _, _) =>
-          loopTestThreatens(current, board, targets, x, y + 1, acc_new)
-      }
-    }
-
     def isThreatens(current: Square, board: Board, targets: Set[Square]): Boolean =
-      loopTestThreatens(current, board, targets, 1, 1, false)
+      targets.exists(target => testSquare(current, target.x, target.y))
   }
 
   case object King extends Piece {
