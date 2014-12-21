@@ -7,21 +7,21 @@ class ChessProblem$Test extends FreeSpec {
 
       assert(solution.size == 4)
       assert(solution.mkString("\n") ==
-          "K**\n" +
-          "**R\n" +
-          "K**\n" +
+          "♔**\n" +
+          "**♖\n" +
+          "♔**\n" +
           "\n" +
-          "K*K\n" +
+          "♔*♔\n" +
           "***\n" +
-          "*R*\n" +
+          "*♖*\n" +
           "\n" +
-          "*R*\n" +
+          "*♖*\n" +
           "***\n" +
-          "K*K\n" +
+          "♔*♔\n" +
           "\n" +
-          "**K\n" +
-          "R**\n" +
-          "**K\n")
+          "**♔\n" +
+          "♖**\n" +
+          "**♔\n")
     }
   }
 }

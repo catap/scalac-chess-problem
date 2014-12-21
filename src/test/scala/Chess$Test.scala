@@ -164,14 +164,14 @@ class Chess$Test extends FreeSpec {
     val wall = Square(4, 7)
 
     assert(Chess(board, Set(Position(King, center), Position(King, corner), Position(King, wall))).toString ==
-      "K*------\n" +
+      "♔*------\n" +
       "**------\n" +
       "---***--\n" +
-      "---*K*--\n" +
+      "---*♔*--\n" +
       "---***--\n" +
       "--------\n" +
       "---***--\n" +
-      "---*K*--\n"
+      "---*♔*--\n"
     )
   }
 }

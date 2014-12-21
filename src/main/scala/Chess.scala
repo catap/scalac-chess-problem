@@ -46,7 +46,7 @@ object Chess {
   }
 
   case object King extends Piece {
-    override def toString: String = "K"
+    override def toString: String = "♔"
 
     def possibleSquares(current: Square, board: Board): Set[Square] =
       (-1 to 1).map(x =>
@@ -61,7 +61,7 @@ object Chess {
   }
 
   case object Queen extends Piece {
-    override def toString: String = "Q"
+    override def toString: String = "♕"
 
     override def possibleSquares(current: Square, board: Board): Set[Square] =
       (-1 * board.x to 1 * board.x).map(x =>
@@ -77,7 +77,7 @@ object Chess {
   }
 
   case object Rock extends Piece {
-    override def toString: String = "R"
+    override def toString: String = "♖"
 
     override def possibleSquares(current: Square, board: Board): Set[Square] =
       (-1 * board.x to 1 * board.x).map(x =>
@@ -93,7 +93,7 @@ object Chess {
   }
 
   case object Bishop extends Piece {
-    override def toString: String = "B"
+    override def toString: String = "♗"
 
     override def possibleSquares(current: Square, board: Board): Set[Square] =
       (-1 * board.x to 1 * board.x).map(x =>
@@ -107,5 +107,4 @@ object Chess {
         .filter(pos => pos.x <= board.x && pos.y <= board.y)
         .toSet
   }
-
 }
