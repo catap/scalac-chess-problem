@@ -1,6 +1,7 @@
 import Chess._
+import org.scalatest.FreeSpec
 
-class Chess$Test extends org.scalatest.FreeSpec {
+class Chess$Test extends FreeSpec {
   "Move pieces on board" - {
     "Board 1x1" - {
       val board = Board(0, 0)
