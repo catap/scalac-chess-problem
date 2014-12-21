@@ -95,4 +95,22 @@ class Chess$Test extends org.scalatest.FreeSpec {
       }
     }
   }
+
+  "Dump to string chess" - {
+    val board = Board(7, 7)
+    val center = Square(4, 3)
+    val corner = Square(0, 0)
+    val wall = Square(4, 7)
+
+    assert(Chess(board, Set(Position(King, center), Position(King, corner), Position(King, wall))).toString ==
+      "K*------\n" +
+      "**------\n" +
+      "---***--\n" +
+      "---*K*--\n" +
+      "---***--\n" +
+      "--------\n" +
+      "---***--\n" +
+      "---*K*--\n"
+    )
+  }
 }
