@@ -46,7 +46,6 @@ object Chess {
   }
 
   case object King extends Piece {
-
     override def toString: String = "K"
 
     def possibleSquares(current: Square, board: Board): Set[Square] =
@@ -55,6 +54,54 @@ object Chess {
           Square(current.x + x, current.y + y)
         ))
         .flatten
+        .filter(pos => pos != current)
+        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x <= board.x && pos.y <= board.y)
+        .toSet
+  }
+
+  case object Queen extends Piece {
+    override def toString: String = "Q"
+
+    override def possibleSquares(current: Square, board: Board): Set[Square] =
+      (-1 * board.x to 1 * board.x).map(x =>
+        (-1 * board.x to 1 * board.x).map(y =>
+          Square(current.x + x, current.y + y)
+        ))
+        .flatten
+        .filter(pos => pos.x == current.x || pos.y == current.y || Math.abs(pos.x - current.x) == Math.abs(pos.y - current.y))
+        .filter(pos => pos != current)
+        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x <= board.x && pos.y <= board.y)
+        .toSet
+  }
+
+  case object Rock extends Piece {
+    override def toString: String = "R"
+
+    override def possibleSquares(current: Square, board: Board): Set[Square] =
+      (-1 * board.x to 1 * board.x).map(x =>
+        (-1 * board.x to 1 * board.x).map(y =>
+          Square(current.x + x, current.y + y)
+        ))
+        .flatten
+        .filter(pos => pos.x == current.x || pos.y == current.y)
+        .filter(pos => pos != current)
+        .filter(pos => pos.x >= 0 && pos.y >= 0)
+        .filter(pos => pos.x <= board.x && pos.y <= board.y)
+        .toSet
+  }
+
+  case object Bishop extends Piece {
+    override def toString: String = "B"
+
+    override def possibleSquares(current: Square, board: Board): Set[Square] =
+      (-1 * board.x to 1 * board.x).map(x =>
+        (-1 * board.x to 1 * board.x).map(y =>
+          Square(current.x + x, current.y + y)
+        ))
+        .flatten
+        .filter(pos => Math.abs(pos.x - current.x) == Math.abs(pos.y - current.y))
         .filter(pos => pos != current)
         .filter(pos => pos.x >= 0 && pos.y >= 0)
         .filter(pos => pos.x <= board.x && pos.y <= board.y)

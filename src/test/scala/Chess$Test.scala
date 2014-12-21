@@ -6,8 +6,20 @@ class Chess$Test extends org.scalatest.FreeSpec {
       val board = Board(0, 0)
       val square = Square(0, 0)
 
-      "Pieces should don't have any possible position" - {
+      "King shouldn't have any possible position" - {
         assert(King.possibleSquares(square, board).size == 0)
+      }
+
+      "Queen shouldn't have any possible position" - {
+        assert(Queen.possibleSquares(square, board).size == 0)
+      }
+
+      "Rock shouldn't have any possible position" - {
+        assert(Rock.possibleSquares(square, board).size == 0)
+      }
+
+      "Bishop shouldn't have any possible position" - {
+        assert(Bishop.possibleSquares(square, board).size == 0)
       }
     }
 
@@ -17,6 +29,18 @@ class Chess$Test extends org.scalatest.FreeSpec {
 
       "King should have 3 possible position" - {
         assert(King.possibleSquares(square, board).size == 3)
+      }
+
+      "Queen should have 3 possible position" - {
+        assert(Queen.possibleSquares(square, board).size == 3)
+      }
+
+      "Rock should have 2 possible position" - {
+        assert(Rock.possibleSquares(square, board).size == 2)
+      }
+
+      "Bishop should have 1 possible position" - {
+        assert(Bishop.possibleSquares(square, board).size == 1)
       }
     }
 
@@ -35,6 +59,42 @@ class Chess$Test extends org.scalatest.FreeSpec {
         }
         "5 possible position at wall" - {
           assert(King.possibleSquares(wall, board).size == 5)
+        }
+      }
+
+      "Queen should have " - {
+        "27 possible position at center (4,3)" - {
+          assert(Queen.possibleSquares(center, board).size == 27)
+        }
+        "21 possible position at corner" - {
+          assert(Queen.possibleSquares(corner, board).size == 21)
+        }
+        "21 possible position at wall" - {
+          assert(Queen.possibleSquares(wall, board).size == 21)
+        }
+      }
+
+      "Rock should have " - {
+        "14 possible position at center" - {
+          assert(Rock.possibleSquares(center, board).size == 14)
+        }
+        "14 possible position at corner" - {
+          assert(Rock.possibleSquares(corner, board).size == 14)
+        }
+        "14 possible position at wall" - {
+          assert(Rock.possibleSquares(wall, board).size == 14)
+        }
+      }
+
+      "Bishop should have " - {
+        "13 possible position at center  (4,3)" - {
+          assert(Bishop.possibleSquares(center, board).size == 13)
+        }
+        "7 possible position at corner" - {
+          assert(Bishop.possibleSquares(corner, board).size == 7)
+        }
+        "7 possible position at wall" - {
+          assert(Bishop.possibleSquares(wall, board).size == 7)
         }
       }
     }
