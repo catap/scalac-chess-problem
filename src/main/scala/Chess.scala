@@ -13,6 +13,9 @@ case class Chess(board: Board, occupied: Set[Position]) {
     occupied.map(position => position.piece.possibleSquares(position.square, board))
       .flatten
 
+  def addPiece(position: Position) =
+    copy(occupied = occupied ++ Set(position))
+
   override def toString: String =
     board.full.map(s =>
       occupied.find {
@@ -28,13 +31,23 @@ case class Chess(board: Board, occupied: Set[Position]) {
 
 object Chess {
 
-  case class Square(x: Int, y: Int)
+  case class Square(x: Int, y: Int) extends Ordered[Square] {
+    override def compare(that: Square): Int = {
+      val r = this.y - that.y
+      if (r != 0) r
+      else this.x - that.x
+    }
+  }
 
   case class Position(piece: Piece, square: Square)
 
   case class Board(x: Int, y: Int) {
     lazy val full =
       (for (_y <- 1 to x; _x <- 1 to y) yield Square(_x, _y)).toList
+
+    def after(square: Square) = {
+      full.filter(square < _)
+    }
   }
 
   sealed trait Piece {

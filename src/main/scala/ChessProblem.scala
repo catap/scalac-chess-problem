@@ -4,37 +4,54 @@ import scala.annotation.tailrec
 
 object ChessProblem {
 
-  def solve(board: Board, pieces: List[Piece]) = {
-
-    val all_pieces = pieces.permutations.toList
-
+  def solve(board: Board, pieces: List[Piece]): List[Chess] = {
     @tailrec
-    def loopTestPieces(squares: List[Square], pieces: List[List[Piece]], safeCombination: Set[Chess]): Set[Chess] = {
-      if (pieces.isEmpty) safeCombination
-      else {
-        val piece = pieces.head
-        val occupied = squares.zip(piece).map(p => Position(p._2, p._1)).toSet
-        val chess = Chess(board, occupied)
-        val newSafeCombination =
-          if (!chess.isThreaten) safeCombination ++ Set(chess)
-          else safeCombination
-        loopTestPieces(squares, pieces.drop(1), newSafeCombination)
-      }
-    }
-
-    @tailrec
-    def loopSolve(squares: List[List[Square]], safeCombination: Set[Chess]): Set[Chess] = {
-      if (squares.isEmpty) safeCombination
+    def loopPossiblePieceSquares(chess: Chess, piece: Piece, acc: List[(Chess, Square)], squares: List[Square]): List[(Chess, Square)] =
+      if (squares.isEmpty) acc
       else {
         val square = squares.head
-        val newSafeCombination = safeCombination ++ loopTestPieces(square, all_pieces, safeCombination)
-        loopSolve(squares.drop(1), newSafeCombination)
+        val _acc =
+          if (chess.occupied.exists(_.square == square)) acc
+          else {
+            val likelyChess = chess.addPiece(Position(piece, square))
+            if (likelyChess.isThreaten) acc
+            else acc ++ List((likelyChess, square))
+          }
+        loopPossiblePieceSquares(chess, piece, _acc, squares.drop(1))
       }
+
+    def possibleSimilarPiecesSquares(chess: Chess, piece: Piece, count: Int) = {
+      @tailrec
+      def loopPossibleSimilarPiecesSquares(count: Int, acc: List[(Chess, Square)]): List[Chess] = {
+        if (count == 0) acc.map(_._1)
+        else {
+          loopPossibleSimilarPiecesSquares(count - 1, acc.map {
+            case (chess, square) =>
+              loopPossiblePieceSquares(chess, piece, List(), chess.board.after(square))
+          }.flatten)
+        }
+      }
+      loopPossibleSimilarPiecesSquares(count - 1,
+        loopPossiblePieceSquares(chess, piece, List(), chess.board.full))
     }
 
-    val squares = board.full.toSet.subsets(pieces.size).map(_.toList).toList
+    @tailrec
+    def loopPossiblePiecesSquares(pieces: List[(Piece, Int)], acc: List[Chess]): List[Chess] =
+      if (pieces.isEmpty) acc
+      else {
+        val (piece, count) = pieces.head
+        loopPossiblePiecesSquares(pieces.drop(1),
+          acc.map(possibleSimilarPiecesSquares(_, piece, count)).flatten)
+      }
 
-    loopSolve(squares, Set())
+    if (pieces.isEmpty) List()
+    else {
+      val groupedPieces = pieces.groupBy(p => p).mapValues(_.size).toList
+      val (piece, count) = groupedPieces.head
+      loopPossiblePiecesSquares(groupedPieces.drop(1),
+        possibleSimilarPiecesSquares(Chess(board, Set()), piece, count))
+
+    }
   }
 
   def main(args: Array[String]): Unit = {
