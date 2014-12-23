@@ -1,3 +1,5 @@
+import scala.concurrent.duration._
+
 import Chess._
 
 import scala.annotation.tailrec
@@ -55,8 +57,13 @@ object ChessProblem {
   }
 
   def main(args: Array[String]): Unit = {
-    println("Input: 3×3 board containing 2 Kings and 1 Rook")
-    val solution = solve(Chess.Board(3, 3), List(Chess.King, Chess.King, Chess.Rock))
+    println("Solving the problem: 7×7 board with 2 Kings, 2 Queens, 2 Bishops and 1 Knight")
+    val start = System.currentTimeMillis()
+    val solution = solve(Board(7, 7), List(King, King, Queen, Queen, Bishop, Bishop, Knight))
+    val end = System.currentTimeMillis()
+    val elapsed = DurationLong(end - start).millis
+    println("Ok, done.")
+    println(f"Elapsed time ${elapsed.toMinutes} min, ${elapsed.toSeconds % 60} sec, ${elapsed.toMillis % 1000} millis (total ${elapsed.toMillis} millis)")
     println(f"I have ${solution.size} solutions. No more of 3 of them follow: ")
     solution.take(3).map(println)
   }
