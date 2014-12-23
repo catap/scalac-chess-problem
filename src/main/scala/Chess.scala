@@ -16,6 +16,19 @@ case class Chess(board: Board, occupied: Set[Position]) {
   def addPiece(position: Position) =
     copy(occupied = occupied ++ Set(position))
 
+  lazy val safeSquares =
+    board.full
+      .filter(!occupiedSquare.contains(_))
+      .filter(!threatenedSquare.contains(_))
+
+  def safeSquaresAfter(piece: Piece, square: Square) =
+    safeSquaresFor(piece)
+      .filter(square < _)
+
+  def safeSquaresFor(piece: Piece) =
+    safeSquares
+      .filter(!piece.isThreatens(_, board, occupiedSquare))
+
   override def toString: String =
     board.full.map(s =>
       occupied.find {
@@ -44,10 +57,6 @@ object Chess {
   case class Board(x: Int, y: Int) {
     lazy val full =
       (for (_y <- 1 to x; _x <- 1 to y) yield Square(_x, _y)).toList
-
-    def after(square: Square) = {
-      full.filter(square < _)
-    }
   }
 
   sealed trait Piece {

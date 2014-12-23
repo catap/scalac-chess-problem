@@ -12,14 +12,8 @@ object ChessProblem {
       if (squares.isEmpty) acc
       else {
         val square = squares.head
-        val _acc =
-          if (chess.occupied.exists(_.square == square)) acc
-          else {
-            val likelyChess = chess.addPiece(Position(piece, square))
-            if (likelyChess.isThreaten) acc
-            else acc ++ List((likelyChess, square))
-          }
-        loopPossiblePieceSquares(chess, piece, _acc, squares.drop(1))
+        loopPossiblePieceSquares(chess, piece,
+          acc ++ List((chess.addPiece(Position(piece, square)), square)), squares.drop(1))
       }
 
     def possibleSimilarPiecesSquares(chess: Chess, piece: Piece, count: Int) = {
@@ -29,12 +23,12 @@ object ChessProblem {
         else {
           loopPossibleSimilarPiecesSquares(count - 1, acc.map {
             case (chess, square) =>
-              loopPossiblePieceSquares(chess, piece, List(), chess.board.after(square))
+              loopPossiblePieceSquares(chess, piece, List(), chess.safeSquaresAfter(piece, square))
           }.flatten)
         }
       }
       loopPossibleSimilarPiecesSquares(count - 1,
-        loopPossiblePieceSquares(chess, piece, List(), chess.board.full))
+        loopPossiblePieceSquares(chess, piece, List(), chess.safeSquaresFor(piece)))
     }
 
     @tailrec
