@@ -1,6 +1,8 @@
+import Chess._
+
 import scala.annotation.tailrec
 
-case class Chess(board: Chess.Board, occupied: Set[Chess.Position]) {
+case class Chess(board: Board, occupied: Set[Position]) {
   lazy val occupiedSquare = occupied.map(_.square)
   lazy val isThreaten =
     occupied.filter(position =>
@@ -12,19 +14,16 @@ case class Chess(board: Chess.Board, occupied: Set[Chess.Position]) {
       .flatten
 
   override def toString: String =
-    (1 to board.y).map(y =>
-      (1 to board.x).map(x =>
-        occupied.find {
-          case Chess.Position(_, Chess.Square(_x, _y)) if _x == x && _y == y => true
-          case _ => false
-        }.map(position => position.piece.toString)
-          .getOrElse(
-            if (threatenedSquare.exists(square => square.x == x && square.y == y)) "*"
-            else "-"
-          ) + (if (x == board.x) "\n" else "")
-      ))
-      .flatten
-      .mkString
+    board.full.map(s =>
+      occupied.find {
+        case Position(_, Square(s.x, s.y)) => true
+        case _ => false
+      }.map(position => position.piece.toString)
+        .getOrElse(
+          if (threatenedSquare.exists(s.equals)) "*"
+          else "-"
+        ) + (if (s.x == board.x) "\n" else "")
+    ).mkString
 }
 
 object Chess {
@@ -33,7 +32,10 @@ object Chess {
 
   case class Position(piece: Piece, square: Square)
 
-  case class Board(x: Int, y: Int)
+  case class Board(x: Int, y: Int) {
+    lazy val full =
+      (for (_y <- 1 to x; _x <- 1 to y) yield Square(_x, _y)).toList
+  }
 
   sealed trait Piece {
     def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean

@@ -23,17 +23,16 @@ object ChessProblem {
     }
 
     @tailrec
-    def loopSolve(squares: List[List[(Int, Int)]], safeCombination: Set[Chess]): Set[Chess] = {
+    def loopSolve(squares: List[List[Square]], safeCombination: Set[Chess]): Set[Chess] = {
       if (squares.isEmpty) safeCombination
       else {
-        val square = squares.head.map(xy => Square(xy._1, xy._2))
+        val square = squares.head
         val newSafeCombination = safeCombination ++ loopTestPieces(square, all_pieces, safeCombination)
         loopSolve(squares.drop(1), newSafeCombination)
       }
     }
 
-    val squares = (for (x <- 1 to board.x; y <- 1 to board.y)
-    yield (x, y)).toSet.subsets(pieces.size).map(_.toList).toList
+    val squares = board.full.toSet.subsets(pieces.size).map(_.toList).toList
 
     loopSolve(squares, Set())
   }
