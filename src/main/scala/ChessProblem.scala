@@ -1,8 +1,7 @@
-import scala.concurrent.duration._
-
 import Chess._
 
 import scala.annotation.tailrec
+import scala.concurrent.duration._
 
 object ChessProblem {
 

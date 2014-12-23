@@ -10,15 +10,18 @@ case class Chess(board: Board, occupied: Set[Position]) {
       .nonEmpty
 
   lazy val threatenedSquare =
-    occupied.map(position => position.piece.possibleSquares(position.square, board))
-      .flatten
+    freeSquare
+      .filter(square => occupied.map(position => position.piece.testSquare(position.square, square.x, square.y)).foldLeft(false)(_ || _))
 
   def addPiece(position: Position) =
     copy(occupied = occupied ++ Set(position))
 
-  lazy val safeSquares =
+  lazy val freeSquare =
     board.full
       .filter(!occupiedSquare.contains(_))
+
+  lazy val safeSquares =
+    freeSquare
       .filter(!threatenedSquare.contains(_))
 
   def safeSquaresAfter(piece: Piece, square: Square) =
@@ -62,7 +65,7 @@ object Chess {
   sealed trait Piece {
     def possibleSquaresFilter(current: Square, x: Int, y: Int): Boolean
 
-    private def testSquare(current: Square, x: Int, y: Int) =
+    def testSquare(current: Square, x: Int, y: Int) =
       if (x == current.x && y == current.y)
         false
       else {
