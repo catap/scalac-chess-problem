@@ -20,10 +20,11 @@ object ChessProblem {
       def loopPossibleSimilarPiecesSquares(count: Int, acc: List[(Chess, Square)]): List[Chess] = {
         if (count == 0) acc.map(_._1)
         else {
-          loopPossibleSimilarPiecesSquares(count - 1, acc.map {
-            case (chess, square) =>
-              loopPossiblePieceSquares(chess, piece, List(), chess.safeSquaresAfter(piece, square))
-          }.flatten)
+          loopPossibleSimilarPiecesSquares(count - 1,
+            acc.foldLeft(List[(Chess, Square)]()) {
+              case (list, (chess, square)) =>
+                loopPossiblePieceSquares(chess, piece, list, chess.safeSquaresAfter(piece, square))
+            })
         }
       }
       loopPossibleSimilarPiecesSquares(count - 1,
