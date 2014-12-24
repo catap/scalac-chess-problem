@@ -32,7 +32,7 @@ case class Chess(board: Board, occupied: List[Position], occupiedSquare: List[Sq
       occupied.find {
         case Position(_, Square(s.x, s.y)) => true
         case _ => false
-      }.map(position => position.piece.toString)
+      }.map(_.piece.toString)
         .getOrElse(
           if (!safeSquares.exists(s.equals)) "*"
           else "-"
@@ -60,7 +60,7 @@ object Chess {
 
   case class Board(x: Int, y: Int) {
     lazy val full =
-      (for (_y <- 1 to x; _x <- 1 to y) yield Square(_x, _y)).toList
+      (for (_y <- 1 to y; _x <- 1 to x) yield Square(_x, _y)).toList
   }
 
   sealed trait Piece {
