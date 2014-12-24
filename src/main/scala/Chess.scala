@@ -2,27 +2,22 @@ import Chess._
 
 import scala.annotation.tailrec
 
-case class Chess(board: Board, occupied: Set[Position]) {
-  lazy val occupiedSquare = occupied.map(_.square)
+case class Chess(board: Board, occupied: List[Position], occupiedSquare: List[Square], safeSquares: List[Square]) {
   lazy val isThreaten =
     occupied.filter(position =>
       position.piece.isThreatens(position.square, board, occupiedSquare))
       .nonEmpty
 
-  lazy val threatenedSquare =
-    freeSquare
-      .filter(square => occupied.map(position => position.piece.testSquare(position.square, square.x, square.y)).foldLeft(false)(_ || _))
+  def addPiece(piece: Piece, square: Square): Chess =
+    copy(occupied = occupied.+:(Position(piece, square)),
+      occupiedSquare = occupiedSquare.+:(square),
+      safeSquares =
+        safeSquares
+          .filter(target =>
+          !square.equals(target) && !piece.testSquare(square, target.x, target.y)))
 
-  def addPiece(position: Position) =
-    copy(occupied = occupied ++ Set(position))
-
-  lazy val freeSquare =
-    board.full
-      .filter(!occupiedSquare.contains(_))
-
-  lazy val safeSquares =
-    freeSquare
-      .filter(!threatenedSquare.contains(_))
+  def addPiece(piece: Piece, x: Int, y: Int): Chess =
+    addPiece(piece, Square(x, y))
 
   def safeSquaresAfter(piece: Piece, square: Square) =
     safeSquaresFor(piece)
@@ -39,13 +34,19 @@ case class Chess(board: Board, occupied: Set[Position]) {
         case _ => false
       }.map(position => position.piece.toString)
         .getOrElse(
-          if (threatenedSquare.exists(s.equals)) "*"
+          if (!safeSquares.exists(s.equals)) "*"
           else "-"
         ) + (if (s.x == board.x) "\n" else "")
     ).mkString
 }
 
 object Chess {
+
+  def apply(board: Board): Chess =
+    Chess(board, List(), List(), board.full)
+
+  def apply(x: Int, y: Int): Chess =
+    Chess(Board(x, y))
 
   case class Square(x: Int, y: Int) extends Ordered[Square] {
     override def compare(that: Square): Int = {
@@ -74,9 +75,9 @@ object Chess {
       }
 
     @tailrec
-    private final def loopTestSquare(current: Square, board: Board, x: Int, y: Int, acc: Set[Square]): Set[Square] = {
+    private final def loopTestSquare(current: Square, board: Board, x: Int, y: Int, acc: List[Square]): List[Square] = {
       val acc_new =
-        if (testSquare(current, x, y)) acc ++ Set(Square(x, y))
+        if (testSquare(current, x, y)) acc.+:(Square(x, y))
         else acc
       (x, y) match {
         case (board.x, board.y) =>
@@ -88,11 +89,11 @@ object Chess {
       }
     }
 
-    def possibleSquares(current: Square, board: Board): Set[Square] = {
-      loopTestSquare(current, board, 1, 1, Set())
+    def possibleSquares(current: Square, board: Board): List[Square] = {
+      loopTestSquare(current, board, 1, 1, List())
     }
 
-    def isThreatens(current: Square, board: Board, targets: Set[Square]): Boolean =
+    def isThreatens(current: Square, board: Board, targets: List[Square]): Boolean =
       targets.exists(target => testSquare(current, target.x, target.y))
   }
 

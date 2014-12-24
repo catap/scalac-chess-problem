@@ -126,8 +126,8 @@ class Chess$Test extends FreeSpec {
       val board = Board(1, 1)
       val square = Square(1, 1)
       "Nobody shouldn't threaten to him-self" - {
-        assert(!King.isThreatens(square, board, Set(square)))
-        assert(!Chess(board, Set(Position(King, square))).isThreaten)
+        assert(!King.isThreatens(square, board, List(square)))
+        assert(!Chess(board).addPiece(King, square).isThreaten)
       }
     }
 
@@ -137,9 +137,10 @@ class Chess$Test extends FreeSpec {
       val square2 = Square(2, 2)
 
       "King should threaten to another piece" - {
-        assert(King.isThreatens(square1, board, Set(square2)))
-        assert(Chess(board,
-          Set(Position(King, square1), Position(King, square2)))
+        assert(King.isThreatens(square1, board, List(square2)))
+        assert(Chess(board)
+          .addPiece(King, square1)
+          .addPiece(King, square2)
           .isThreaten)
       }
     }
@@ -152,26 +153,30 @@ class Chess$Test extends FreeSpec {
       val corner2 = Square(8, 8)
 
       "King at center should threaten to another King at center" - {
-        assert(King.isThreatens(center1, board, Set(center2)))
-        assert(Chess(board,
-          Set(Position(King, center1), Position(King, center2)))
+        assert(King.isThreatens(center1, board, List(center2)))
+        assert(Chess(board)
+          .addPiece(King, center1)
+          .addPiece(King, center2)
           .isThreaten)
       }
 
       "King at center shouldn't threaten to another King at corner" - {
-        assert(!King.isThreatens(center1, board, Set(corner1)))
-        assert(!King.isThreatens(center1, board, Set(corner2)))
-        assert(!King.isThreatens(center1, board, Set(corner1, corner2)))
-        assert(!Chess(board,
-          Set(Position(King, corner1), Position(King, corner2)))
+        assert(!King.isThreatens(center1, board, List(corner1)))
+        assert(!King.isThreatens(center1, board, List(corner2)))
+        assert(!King.isThreatens(center1, board, List(corner1, corner2)))
+        assert(!Chess(board)
+          .addPiece(King, corner1)
+          .addPiece(King, corner2)
           .isThreaten)
       }
 
       "King at center should threaten to someone on this board" - {
-        assert(King.isThreatens(center1, board, Set(center1, center2, corner1, corner2)))
-        assert(Chess(board,
-          Set(Position(King, corner1), Position(King, corner2),
-            Position(King, center1), Position(King, center2)))
+        assert(King.isThreatens(center1, board, List(center1, center2, corner1, corner2)))
+        assert(Chess(board)
+          .addPiece(King, corner1)
+          .addPiece(King, corner2)
+          .addPiece(King, center1)
+          .addPiece(King, center2)
           .isThreaten)
       }
     }
@@ -183,15 +188,18 @@ class Chess$Test extends FreeSpec {
     val corner = Square(1, 1)
     val wall = Square(5, 8)
 
-    assert(Chess(board, Set(Position(King, center), Position(King, corner), Position(King, wall))).toString ==
-      "♔*------\n" +
-      "**------\n" +
-      "---***--\n" +
-      "---*♔*--\n" +
-      "---***--\n" +
-      "--------\n" +
-      "---***--\n" +
-      "---*♔*--\n"
+    assert(Chess(board)
+      .addPiece(King, center)
+      .addPiece(King, corner)
+      .addPiece(King, wall).toString ==
+        "♔*------\n" +
+        "**------\n" +
+        "---***--\n" +
+        "---*♔*--\n" +
+        "---***--\n" +
+        "--------\n" +
+        "---***--\n" +
+        "---*♔*--\n"
     )
   }
 }
