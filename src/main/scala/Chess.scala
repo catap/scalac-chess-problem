@@ -20,8 +20,9 @@ case class Chess(board: Board, occupied: List[Position], occupiedSquare: List[Sq
     addPiece(piece, Square(x, y))
 
   def safeSquaresAfter(piece: Piece, square: Square) =
-    safeSquaresFor(piece)
+    safeSquares
       .filter(square < _)
+      .filter(!piece.isThreatens(_, board, occupiedSquare))
 
   def safeSquaresFor(piece: Piece) =
     safeSquares
