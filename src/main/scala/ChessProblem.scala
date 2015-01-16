@@ -37,7 +37,7 @@ object ChessProblem {
       else {
         val (piece, count) = pieces.head
         loopPossiblePiecesSquares(pieces.tail,
-          acc.map(possibleSimilarPiecesSquares(_, piece, count)).flatten)
+          acc.par.map(possibleSimilarPiecesSquares(_, piece, count)).flatten.toList)
       }
 
     if (pieces.isEmpty) List()
