@@ -12,7 +12,7 @@ object ChessProblem {
       else {
         val square = squares.head
         loopPossiblePieceSquares(chess, piece,
-          acc.+:((chess.addPiece(piece, square), square)), squares.tail)
+          (chess.addPiece(piece, square), square) :: acc, squares.tail)
       }
 
     def possibleSimilarPiecesSquares(chess: Chess, piece: Piece, count: Int) = {

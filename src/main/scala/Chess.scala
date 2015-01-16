@@ -8,25 +8,52 @@ case class Chess(board: Board, occupied: List[Position], occupiedSquare: List[Sq
       position.piece.isThreatens(position.square, board, occupiedSquare))
       .nonEmpty
 
+  @tailrec
+  private def filterSafeSquare(piece: Piece, square: Square, safeSquares: List[Square], acc: List[Square]): List[Square] =
+    if (safeSquares.isEmpty) acc
+    else {
+      val target = safeSquares.head
+      filterSafeSquare(piece, square, safeSquares.tail,
+        if (!square.equals(target) && !piece.possibleSquaresFilter(square, target.x, target.y))
+          target :: acc
+        else acc)
+    }
+
   def addPiece(piece: Piece, square: Square): Chess =
-    copy(occupied = occupied.+:(Position(piece, square)),
-      occupiedSquare = occupiedSquare.+:(square),
-      safeSquares =
-        safeSquares
-          .filter(target =>
-          !square.equals(target) && !piece.testSquare(square, target.x, target.y)))
+    copy(occupied = Position(piece, square) :: occupied,
+      occupiedSquare = square :: occupiedSquare,
+      safeSquares = filterSafeSquare(piece, square, safeSquares, List()))
 
   def addPiece(piece: Piece, x: Int, y: Int): Chess =
     addPiece(piece, Square(x, y))
 
+  @tailrec
+  private def filterSafeSquaresAfter(piece: Piece, square: Square, squares: List[Square], acc: List[Square]): List[Square] =
+    if (squares.isEmpty) acc
+    else {
+      val target = squares.head
+      filterSafeSquaresAfter(piece, square, squares.tail,
+        if (square < target && !piece.isThreatens(target, board, occupiedSquare))
+            target :: acc
+        else acc)
+    }
+
   def safeSquaresAfter(piece: Piece, square: Square) =
-    safeSquares
-      .filter(square < _)
-      .filter(!piece.isThreatens(_, board, occupiedSquare))
+    filterSafeSquaresAfter(piece, square, safeSquares, List())
+
+  @tailrec
+  private def filterSafeSquaresFor(piece: Piece, squares: List[Square], acc: List[Square]): List[Square] =
+    if (squares.isEmpty) acc
+    else {
+      val target = squares.head
+      filterSafeSquaresFor(piece, squares.tail,
+        if (!piece.isThreatens(target, board, occupiedSquare))
+          target :: acc
+        else acc)
+    }
 
   def safeSquaresFor(piece: Piece) =
-    safeSquares
-      .filter(!piece.isThreatens(_, board, occupiedSquare))
+    filterSafeSquaresFor(piece, safeSquares, List())
 
   override def toString: String =
     board.full.map(s =>
@@ -78,7 +105,7 @@ object Chess {
     @tailrec
     private final def loopTestSquare(current: Square, board: Board, x: Int, y: Int, acc: List[Square]): List[Square] = {
       val acc_new =
-        if (testSquare(current, x, y)) acc.+:(Square(x, y))
+        if (testSquare(current, x, y)) Square(x, y) :: acc
         else acc
       (x, y) match {
         case (board.x, board.y) =>
@@ -94,8 +121,14 @@ object Chess {
       loopTestSquare(current, board, 1, 1, List())
     }
 
-    def isThreatens(current: Square, board: Board, targets: List[Square]): Boolean =
-      targets.exists(target => testSquare(current, target.x, target.y))
+    @tailrec
+    final def isThreatens(current: Square, board: Board, targets: List[Square]): Boolean =
+      if (targets.isEmpty) false
+      else {
+        val target = targets.head
+        if (testSquare(current, target.x, target.y)) true
+        else isThreatens(current, board, targets.tail)
+      }
   }
 
   case object King extends Piece {
