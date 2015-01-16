@@ -7,7 +7,7 @@ Example output:
 ```
 Solving the problem: 7×7 board with 2 Kings, 2 Queens, 2 Bishops and 1 Knight
 Ok, done.
-Elapsed time 0 min, 3 sec, 683 millis (total 3683 millis)
+Elapsed time 0 min, 2 sec, 972 millis (total 2972 millis)
 I have 3063828 solutions. No more 3 of them follow:
 ♘**-***
 --*--**
